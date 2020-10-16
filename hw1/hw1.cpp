@@ -57,7 +57,7 @@ int main() {
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
-	timer.setLoopFrequency(1000); 
+	timer.setLoopFrequency(1000);
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
@@ -75,39 +75,47 @@ int main() {
 		// **********************
 		// WRITE YOUR CODE AFTER
 		// **********************
-		int controller_number = QUESTION_1;  // change to the controller of the question you want : QUESTION_1, QUESTION_2, QUESTION_3, QUESTION_4, QUESTION_5
-
+		int controller_number = QUESTION_4;  // change to the controller of the question you want : QUESTION_1, QUESTION_2, QUESTION_3, QUESTION_4, QUESTION_5
+		VectorXd q_desired = M_PI / 180.0 *(VectorXd(dof)<<90.0,-45.0,0.0,-125.0,0.0,80.0,0.0).finished();   // change to the desired robot joint angles for the question
 
 		// ---------------------------  question 1 ---------------------------------------
 		if(controller_number == QUESTION_1)
 		{
-			double kp = 0.0;      // chose your p gain
-			double kv = 0.0;      // chose your d gain
-
-			VectorXd q_desired = initial_q;   // change to the desired robot joint angles for the question
-
-			command_torques.setZero();  // change to the control torques you compute
+			double kp = 400.0;      // chose your p gain
+			double kv = 55.0;      // chose your d gain
+			command_torques = -kp * (robot->_q - q_desired) - kv * robot->_dq;  // change to the control torques you compute
 		}
 
 		// ---------------------------  question 2 ---------------------------------------
 		if(controller_number == QUESTION_2)
 		{
-
-			command_torques.setZero();
+			double kp = 400.0;      // chose your p gain
+			double kv = 65.0;      // chose your d gain
+			VectorXd gravity = VectorXd::Zero(dof);
+			robot->gravityVector(gravity);
+			command_torques = -kp * (robot->_q - q_desired) - kv * robot->_dq + gravity;
 		}
 
 		// ---------------------------  question 3 ---------------------------------------
 		if(controller_number == QUESTION_3)
 		{
-
-			command_torques.setZero();
+			double kp = 400.0;      // chose your p gain
+			double kv = 61.0;      // chose your d gain
+			VectorXd gravity = VectorXd::Zero(dof);
+			robot->gravityVector(gravity);
+			command_torques = robot->_M*(-kp * (robot->_q - q_desired) - kv * robot->_dq) + gravity;
 		}
 
 		// ---------------------------  question 4 ---------------------------------------
 		if(controller_number == QUESTION_4)
 		{
-
-			command_torques.setZero();
+			double kp = 400.0;      // chose your p gain
+			double kv = 40.0;      // chose your d gain
+			VectorXd gravity = VectorXd::Zero(dof);
+			VectorXd b = VectorXd::Zero(dof);
+			robot->gravityVector(gravity);
+			robot->coriolisForce(b);
+			command_torques = robot->_M*(-kp * (robot->_q - q_desired) - kv * robot->_dq) + gravity + b;
 		}
 
 		// ---------------------------  question 5 ---------------------------------------

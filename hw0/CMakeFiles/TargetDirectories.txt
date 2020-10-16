@@ -1,0 +1,12 @@
+/home/jezmond/snap/SAI/apps/cs225a/hw0/CMakeFiles/rebuild_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/CMakeFiles/edit_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/rebuild_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/edit_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/controller.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/simviz.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/simulation.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/lecture2_demo/CMakeFiles/visualization.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/hw0/CMakeFiles/edit_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/hw0/CMakeFiles/hw0.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/hw0/CMakeFiles/rebuild_cache.dir
+/home/jezmond/snap/SAI/apps/cs225a/hw0/hw0/CMakeFiles/hw0_viz.dir

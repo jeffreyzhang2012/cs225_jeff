@@ -69,7 +69,7 @@ int main() {
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
-	timer.setLoopFrequency(1000); 
+	timer.setLoopFrequency(1000);
 	double start_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
@@ -87,35 +87,127 @@ int main() {
 		// **********************
 		// WRITE YOUR CODE AFTER
 		// **********************
-		int controller_number = QUESTION_1;  // change to the controller of the question you want : QUESTION_1, QUESTION_2, QUESTION_3, QUESTION_4, QUESTION_5
+		int controller_number = QUESTION_4;  // change to the controller of the question you want : QUESTION_1, QUESTION_2, QUESTION_3, QUESTION_4, QUESTION_5
 
 
 		// ---------------------------  question 1 ---------------------------------------
 		if(controller_number == QUESTION_1)
 		{
+			VectorXd Dq = VectorXd::Zero(7);
+			Dq(6) = robot->_q(6) - 0.1;
+			// cout<<Dq<<endl;
+			// cout<<"HI"<<endl;
+			// cout<<robot->_q<<endl;
 
-			command_torques.setZero();  
+			VectorXd g(dof);
+			VectorXd b(dof);
+			robot->gravityVector(g);
+			robot->coriolisForce(b);
+			MatrixXd Kp = MatrixXd::Identity(dof, dof) * 400.0;
+			MatrixXd Kv = MatrixXd::Identity(dof, dof) * 50.0;
+			Kp(6,6) = 50.0;
+			Kv(6,6) = -0.19;
+			// Kv(6,6) = -0.3299;
+			double wn = pow(Kp(6,6)/robot->_M(6,6),0.5);
+			// cout<<wn/2.0/M_PI<<endl;
+			command_torques=-Kp*Dq-(Kv*robot->_dq) + b + g;
+			redis_client.setEigenMatrixDerived("x",g);
 		}
 
 		// ---------------------------  question 2 ---------------------------------------
 		if(controller_number == QUESTION_2)
 		{
+			MatrixXd Lambd(dof,dof);
+			MatrixXd Jv(3,dof);
+			MatrixXd N(6,dof);
+			Vector3d x;
+			VectorXd g;
+			Vector3d d(0,0,0.1);
+			Vector3d xd(0.3,0.1,0.5);
+			Vector3d x_dot;
 
-			command_torques.setZero();
+			robot->Jv(Jv,"link7", d);
+			robot->position(x,"link7", d);
+			robot->linearVelocity(x_dot,"link7", d);
+			robot->taskInertiaMatrixWithPseudoInv(Lambd,Jv);
+			robot->gravityVector(g);
+			robot->nullspaceMatrix(N,Jv);
+			double kp = 200.0;
+			double kv = 80.0;
+			Vector3d F = Lambd * (-kp*(x-xd)-kv*x_dot);
+			MatrixXd KV = MatrixXd::Identity(dof, dof) * 12.0;
+			command_torques = Jv.transpose() * F + g + N.transpose() * robot->_M * (-kp*robot->_q-(kv*robot->_dq));
+			// command_torques = Jv.transpose() * F + g ;
+			// command_torques = Jv.transpose() * F + g + (-KV * robot->_dq);
+			redis_client.setEigenMatrixDerived("x",x);
 		}
 
 		// ---------------------------  question 3 ---------------------------------------
 		if(controller_number == QUESTION_3)
 		{
 
-			command_torques.setZero();
+			MatrixXd Lambd(dof,dof);
+			MatrixXd Jv(3,dof);
+			MatrixXd N(6,dof);
+			MatrixXd Jb(6,dof);
+			Vector3d x;
+			VectorXd p;
+			VectorXd g;
+			Vector3d d(0,0,0.1);
+			Vector3d xd(0.3,0.1,0.5);
+			Vector3d x_dot;
+
+
+			robot->Jv(Jv,"link7", d);
+			robot->position(x,"link7", d);
+			robot->linearVelocity(x_dot,"link7", d);
+			robot->taskInertiaMatrixWithPseudoInv(Lambd,Jv);
+			robot->gravityVector(g);
+			robot->nullspaceMatrix(N,Jv);
+			robot->dynConsistentInverseJacobian(Jb,Jv);
+			p = Jb.transpose() * g;
+			double kp = 200.0;
+			double kv = 80.0;
+			Vector3d F = Lambd * (-kp*(x-xd)-kv*x_dot) + p;
+			MatrixXd KV = MatrixXd::Identity(dof, dof) * 12.0;
+			command_torques = Jv.transpose() * F + N.transpose() * robot->_M * (-KV * robot->_dq);
+			// command_torques = Jv.transpose() * F + g + (-KV * robot->_dq);
+			redis_client.setEigenMatrixDerived("x",x);
 		}
 
 		// ---------------------------  question 4 ---------------------------------------
 		if(controller_number == QUESTION_4)
 		{
-
-			command_torques.setZero();
+			MatrixXd Lambd(dof,dof);
+			MatrixXd J(6,dof);
+			MatrixXd Jv(3,dof);
+			MatrixXd N(6,dof);
+			MatrixXd Jb(6,dof);
+			Vector3d x;
+			VectorXd p;
+			VectorXd g;
+			Vector3d d(0,0,0.1);
+			Vector3d xd(0.3,0.1,0.5);
+			Vector3d x_dot;
+			double t = timer.elapsedTime();
+			xd(1) = xd(1) + 0.1 * sin(t*M_PI);
+			xd(2) = xd(2) + 0.1 * cos(t*M_PI);
+			robot->Jv(Jv,"link7", d);
+			robot->position(x,"link7", d);
+			robot->linearVelocity(x_dot,"link7", d);
+			robot->taskInertiaMatrixWithPseudoInv(Lambd,Jv);
+			robot->gravityVector(g);
+			robot->nullspaceMatrix(N,Jv);
+			robot->dynConsistentInverseJacobian(Jb,Jv);
+			p = Jb.transpose() * g;
+			double kp = 200.0;
+			double kv = 80.0;
+			// Lambd = MatrixXd::Identity(dof, dof);
+			Vector3d F = Lambd * (-kp*(x-xd)-kv*x_dot) + p;
+			MatrixXd KV = MatrixXd::Identity(dof, dof) * 12.0;
+			// command_torques = Jv.transpose() * F + N.transpose() * robot->_M * (-KV * robot->_dq);
+			command_torques = Jv.transpose() * F + N.transpose() * (-kp*robot->_q-(kv*robot->_dq)+g);
+			redis_client.setEigenMatrixDerived("x",x);
 		}
 
 		// **********************
@@ -124,7 +216,10 @@ int main() {
 
 		// send to redis
 		redis_client.setEigenMatrixJSON(JOINT_TORQUES_COMMANDED_KEY, command_torques);
-
+		// if(controller_counter==0){
+			// cout<<robot->gravityVector(g,gravity)<<endl;
+			// cout<<robot->gravityVector(g)<<endl;
+		// }
 		controller_counter++;
 
 	}

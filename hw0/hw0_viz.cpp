@@ -50,7 +50,7 @@ int main() {
 
 	// load robots
 	auto robot = new Sai2Model::Sai2Model(robot_file, false);
-	robot->_q << 0, 1.0, -0.4;
+	robot->_q << 0.0, 1.0, -0.4;
 	robot->updateKinematics();
 	redis_client.setEigenMatrixJSON(JOINT_ANGLES_KEY, robot->_q);
 
@@ -88,7 +88,7 @@ int main() {
 	// cache variables
 	double last_cursorx, last_cursory;
 
-	redis_client.setEigenMatrixJSON(JOINT_ANGLES_KEY, robot->_q); 
+	redis_client.setEigenMatrixJSON(JOINT_ANGLES_KEY, robot->_q);
 
 	// while window is open:
 	while (!glfwWindowShouldClose(window))
@@ -150,7 +150,7 @@ int main() {
 		if (fTransZp) {
 			camera_pos = camera_pos + 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat + 0.1*cam_depth_axis;
-		}	    
+		}
 		if (fTransZn) {
 			camera_pos = camera_pos - 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat - 0.1*cam_depth_axis;
@@ -249,4 +249,3 @@ void mouseClick(GLFWwindow* window, int button, int action, int mods) {
 			break;
 	}
 }
-

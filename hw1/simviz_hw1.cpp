@@ -121,7 +121,7 @@ int main() {
 	redis_client.set(CONTROLLER_RUNING_KEY, "0");
 	fSimulationRunning = true;
 	thread sim_thread(simulation, robot, sim);
-	
+
 	// while window is open:
 	while (fSimulationRunning)
 	{
@@ -180,7 +180,7 @@ int main() {
 		if (fTransZp) {
 			camera_pos = camera_pos + 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat + 0.1*cam_depth_axis;
-		}	    
+		}
 		if (fTransZn) {
 			camera_pos = camera_pos - 0.1*cam_depth_axis;
 			camera_lookat = camera_lookat - 0.1*cam_depth_axis;
@@ -227,7 +227,7 @@ void simulation(Sai2Model::Sai2Model* robot, Simulation::Sai2Simulation* sim) {
 	// create a timer
 	LoopTimer timer;
 	timer.initializeTimer();
-	timer.setLoopFrequency(1000); 
+	timer.setLoopFrequency(1000);
 	double last_time = timer.elapsedTime(); //secs
 	bool fTimerDidSleep = true;
 
@@ -253,7 +253,7 @@ void simulation(Sai2Model::Sai2Model* robot, Simulation::Sai2Simulation* sim) {
 
 		// integrate forward
 		// double curr_time = timer.elapsedTime();
-		// double loop_dt = curr_time - last_time; 
+		// double loop_dt = curr_time - last_time;
 		sim->integrate(0.001);
 
 		// read joint positions, velocities, update model
@@ -347,4 +347,3 @@ void mouseClick(GLFWwindow* window, int button, int action, int mods) {
 			break;
 	}
 }
-
